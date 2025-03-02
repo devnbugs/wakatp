@@ -8,11 +8,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Install required software
-      run: |
-        Invoke-WebRequest -Uri "https://chocolatey.org/install.ps1" -UseBasicParsing | iex
-        choco install -y remmina remmina-plugin-rdp
-
+    
     - name: Configure RDP
       run: |
         # Set RDP timeout to 0 (disabled)
