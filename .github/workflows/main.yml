@@ -1,0 +1,37 @@
+name: Deploy Windows RDP Server
+
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Install required software
+      run: |
+        Invoke-WebRequest -Uri "https://chocolatey.org/install.ps1" -UseBasicParsing | iex
+        choco install -y remmina remmina-plugin-rdp
+
+    - name: Configure RDP
+      run: |
+        # Set RDP timeout to 0 (disabled)
+        Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp "TimeoutSeconds" 0 -Force
+
+        # Enable RDP
+        Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Services\TermService "Start" 4 -Force
+        Set-Service -Name TermService -StartupType Automatic
+        Start-Service -Name TermService
+
+    - name: Send RDP details
+      run: |
+        $rdpIP = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias "Ethernet" | Where-Object { $_.IPv4Address -notlike '169.254*' }).IPv4Address
+        $rdpPort = 3389
+        $rdpUsername = 'rhsalisu'
+        $rdpPassword = 'P@ssw0rd!25' # Change this to a strong password
+
+        Write-Host "RDP Server Details:"
+        Write-Host "IP: $rdpIP"
+        Write-Host "Port: $rdpPort"
+        Write-Host "Username: $rdpUsername"
+        Write-Host "Password: $rdpPassword"
