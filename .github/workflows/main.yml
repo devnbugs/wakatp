@@ -11,8 +11,7 @@ jobs:
     
     - name: Configure RDP
       run: |
-        # Set RDP timeout to 0 (disabled)
-        Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp "TimeoutSeconds" 0 -Force
+
 
         # Enable RDP
         Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Services\TermService "Start" 4 -Force
